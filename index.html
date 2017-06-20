@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html data-ng-app="marvel" data-ng-cloak>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=1" />
+		<link href="https://fonts.googleapis.com/css?family=Magra:700|Open+Sans:400,400i,700,700i" rel="stylesheet"/>
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<title>Marvel Graphic Novels</title>
+		<meta name="description" content="Angular test" />
+	</head>
+	<body>
+		<div data-ng-controller="booksCtrl">
+			<div class="topSection">
+				<h1>Marvel's Comics</h1>
+				<h2>The Ultimate Collection of Graphic Novels</h2>
+				<div class="search">
+					<input type="text"
+						data-ng-model="searchTerm"
+						data-ng-change="searchResult(searchTerm)"
+						value="Search" data-page-scroll-on-enter />
+					<span class="icon-magnifying-glass"></span>
+				</div>
+			</div><!--end topSection -->
+			<div class="searchTitle {{searchStarted}}">
+				<h2 data-ng-if="searchTerm!==''">Search results for <span>{{searchTerm}}</span></h2>
+			</div>
+			<div data-ng-if="!errorMsg" class="pageInfo">Books List <span data-ng-if="!notFoundMsg">(currently showing items: 1 {{ filteredBookList.length | endPage }})</span></div>
+			<div data-ng-if="loading" class="preloader"><div></div></div>
+			<ul class="listWrapper">
+				<li data-ng-repeat="book in filteredBookList">
+					<div class="imageWrapper">
+					    <img data-ng-if="book.thumbnail" data-ng-click="createDetails($index)" data-ng-src="{{ book.thumbnail}}" alt="{{ book.title }}" />
+						<div class="moreInfo" data-ng-click="createDetails($index)"><span class="icon-info-with-circle"></span>Read More</div>
+					</div>
+					<h3>{{ book.title }}</h3>
+					<p data-ng-if="book.writer" class="bookWriter">{{book.writer}}</p>
+				</li>
+			</ul>
+			<div data-ng-if="errorMsg" class="notFound">{{errorMsg}}</div>
+			<div class="notFound">{{notFoundMsg}}</div>
+			<div class="goToTop" data-check-offset data-page-scroll-top><span>Top</span></div>
+			<!-- details overlay -->
+			<div class="{{detailsClass}} moreInformationOverlay" data-ng-click="hideDetails()">
+				<div class="moreInformationWrapper" data-ng-if="clickedIndex!==''" id="moreInfoHolder" data-ng-click="noPropagation($event)">
+					<div class="detailsWrapper">
+						<div class="hideBtn icon-circle-with-cross" data-ng-click="hideDetails()"><span>Close</span></div>
+						<h2>{{ filteredBookList[clickedIndex].title }}</h2>
+						<img class="bookMainImage" data-ng-if="filteredBookList[clickedIndex].thumbnailBig" data-ng-src="{{ filteredBookList[clickedIndex].thumbnailBig}}" alt="{{ filteredBookList[clickedIndex].title }}" />
+						<div class="detailsInfo">
+							<p data-ng-if="filteredBookList[clickedIndex].writer"><strong>Writer:</strong> {{filteredBookList[clickedIndex].writer}}</p>
+							<p data-ng-if="filteredBookList[clickedIndex].description" data-ng-bind-html="filteredBookList[clickedIndex].description"></p>
+							<p data-ng-if="filteredBookList[clickedIndex].published"><strong>Published on:</strong> {{filteredBookList[clickedIndex].published | date:'MMMM dd, yyyy'}}</p>
+							<p data-ng-if="filteredBookList[clickedIndex].stories"><strong>Stories:</strong> {{filteredBookList[clickedIndex].stories}}</p>
+							<p data-ng-if="filteredBookList[clickedIndex].characters"><strong>Characters:</strong> {{filteredBookList[clickedIndex].characters}}</p>
+						</div><!--end detailsInfo -->
+					</div><!--end detailsWrapper -->
+					<div class="pricesWrapper">
+						<p data-ng-if="filteredBookList[clickedIndex].printPrice">Print issue:<strong> ${{filteredBookList[clickedIndex].printPrice}}</strong></p>
+						<p data-ng-if="filteredBookList[clickedIndex].digitalPrice">Digital issue:<strong> ${{filteredBookList[clickedIndex].digitalPrice}}</strong></p>
+					</div><!--end pricesWrapper -->
+				</div><!-- moreInformationWrapper -->
+			</div><!-- end moreInformationOverlay -->
+		</div>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0/angular-sanitize.min.js"></script>
+		<script src="app.js"></script>
+	</body>
+</html>
